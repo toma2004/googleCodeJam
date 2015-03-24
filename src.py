@@ -4,7 +4,7 @@
 #
 #
 import re
-
+import os
 def buyItems(money, mylist,length):
     mydict = {}
     index = -1
@@ -32,8 +32,8 @@ def buyItems(money, mylist,length):
             return (item1,item2) if item1 < item2 else (item2,item1)
         else:
             first += 1
-
-with open("small.txt", 'r') as f:
+os.chdir('store_creadit_input_output')
+with open("A-large-practice.in", 'r') as f:
     total = 0
     money = 0
     length = 0
@@ -58,7 +58,9 @@ with open("small.txt", 'r') as f:
                 mylist = re.split('\s+',line)
                 count += 1
                 mytuple = buyItems(money,mylist,length)
-                print "Case #%d: %s %s" % (int(total)-n,mytuple[0],mytuple[1])
+                with open("Store_creadit_large.out", 'a+') as w:
+                    myline = "Case #%d: %s %s\n" % (int(total)-n,mytuple[0],mytuple[1])
+                    w.writelines(myline)
                 #print "money = %s, length = %s, \nmylist = %s" % (money,length,mylist)
                 n -= 1
                 continue
