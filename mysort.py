@@ -6,10 +6,7 @@ Created on Apr 8, 2015
 import random
 import time
 
-class mysort:
-    def mytest(self,alist):
-        alist.sort()
-        
+class mysort:        
     def mergeSort(self,alist):
         '''Merge sort a list. Big O (n log n)'''
         #base case
@@ -62,67 +59,31 @@ class mysort:
             
     def partition(self,alist,first,last):
         mypivot = alist[first] #Assume the first value is pivot
-        left_index = first
-        right_index = last
-        while(left_index < right_index):
-            while(alist[left_index] <= mypivot):
-                left_index += 1
-            while(alist[right_index] > mypivot):
-                right_index -= 1
-            if left_index < right_index: #sanity check before swap
-                #alist[left_index],alist[right_index] = alist[right_index],alist[left_index]
-                temp = alist[left_index]
-                alist[left_index] = alist[right_index]
-                alist[right_index] = temp
-        temp = alist[first]
-        alist[first] = alist[right_index]
-        alist[right_index] = temp
-        return right_index
-    
-    def quickSortHelper(self,alist,first,last):
-        if first<last:
-
-            splitpoint = self.partition1(alist,first,last)
-
-            self.quickSortHelper(alist,first,splitpoint-1)
-            self.quickSortHelper(alist,splitpoint+1,last)
-
-
-    def partition1(self,alist,first,last):
-        pivotvalue = alist[first]
-    
-        leftmark = first+1
-        rightmark = last
         
+        left_index = first+1
+        right_index = last
+    
         done = False
         while not done:
-        
-            while leftmark <= rightmark and \
-                    alist[leftmark] <= pivotvalue:
-                leftmark = leftmark + 1
-            
-            while alist[rightmark] >= pivotvalue and \
-                    rightmark >= leftmark:
-                rightmark = rightmark -1
-            
-            if rightmark < leftmark:
+            while left_index <= right_index and alist[left_index] <= mypivot:
+                left_index += 1
+         
+            while alist[right_index] >= mypivot and right_index >= left_index:
+                #right_index = right_index -1
+                right_index -= 1
+                 
+            if right_index < left_index:
                 done = True
             else:
-                temp = alist[leftmark]
-                alist[leftmark] = alist[rightmark]
-                alist[rightmark] = temp
-        
-        temp = alist[first]
-        alist[first] = alist[rightmark]
-        alist[rightmark] = temp
-        
-        
-        return rightmark
+                alist[left_index],alist[right_index] = alist[right_index],alist[left_index]
+                        
+        alist[first],alist[right_index] = alist[right_index],mypivot
+        return right_index
 
 #test
 if __name__ == "__main__":
     test_list = []
-    for x in range(10):
+    for x in range(100000):
         test_list.append(random.randint(0,1000))
     quick_list = test_list[:]
     test_sort = mysort()
@@ -130,10 +91,9 @@ if __name__ == "__main__":
     start = time.clock()
     test_sort.mergeSort(test_list)
     print "Time it takes to complete merge sort is ", time.clock() - start
-    print test_list
     
     print "Using Quick Sort"
     start = time.clock()
-    test_sort.quickSortHelper(quick_list,0,len(quick_list)-1)
+    test_sort.quickSort(quick_list,0,len(quick_list)-1)
     print "Time it takes to complete quick sort is ", time.clock() - start
-    print quick_list
+
