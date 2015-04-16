@@ -6,10 +6,8 @@ Created on Apr 11, 2015
 import random
 
 class find_shortest_distance:
-    def __init__(self,mygraph):
-        self.mygraph = mygraph
         
-    def make_graph_uniform_cost(self,num_nodes):
+    def make_graph_uniform_cost(self):
         #myrand = random.randint(0,1000) #this is uniform cost
         
         mygraph = {
@@ -47,16 +45,49 @@ class find_shortest_distance:
         return mygraph
     
     def DFS_iterative(self,mygraph,start):
-        '''Use BFS to find shortest path with uniform positive cost.
-            Run time = (|V| - worst space + |E| - worst performance) 
+        '''Graph transversal using DFS - iterative method
+            stack data structure & while loop
             Need to mark visited node by adding visited list'''
         visited,stack = set(),[start] #start with empty set of visited node, and list of start in stack
         while stack:
             node = stack.pop()
             if node not in visited:
                 visited.add(node)
-                stack.extend(mygraph[start] - visited)
+                stack.extend(mygraph[node] - visited)
         return visited
+    
+    def DFS_recursive(self,mygraph,start,visited=None):
+        '''Use recursive method to traverse the graph in DFS
+            stack data structure & for loop'''
+        #Base case
+        if visited == None:
+            visited = set()
+        visited.add(start)
+        for next in graph[start] - visited:
+            self.DFS_recursive(mygraph,next,visited)
+        return visited
+
+    def dfs_paths_iterative(self,mygraph,start,goal):
+        '''Use DFS to find shortest path with uniform positive cost.
+            Run time = (|V| - worst space + |E| - worst performance)'''
+        stack = [(start, [start])]
+        while stack:
+            (vertex, path) = stack.pop()
+            for next in graph[vertex] - set(path):
+                if next == goal:
+                    yield path + [next]
+                else:
+                        stack.append((next, path + [next]))
+
+            
+        
+        
+if __name__ == '__main__':
+    fsd = find_shortest_distance()
+    graph = fsd.make_graph_uniform_cost()
+    print fsd.DFS_iterative(graph, 'a')
+    print fsd.DFS_recursive(graph, 'a')
+    print list(fsd.dfs_paths_iterative(graph, 'a', 'f'))
         
         
         
