@@ -68,7 +68,7 @@ class find_shortest_distance:
         return visited
 
     def dfs_paths_iterative(self,mygraph,start,goal):
-        '''Use DFS to find shortest path with uniform positive cost.
+        '''Use DFS to find path with uniform positive cost.
             Run time = (|V| - worst space + |E| - worst performance)'''
         stack = [(start, [start])]
         while stack:
@@ -78,9 +78,50 @@ class find_shortest_distance:
                     yield path + [next]
                 else:
                         stack.append((next, path + [next]))
-
-            
+                        
+    def dfs_paths_recursive(self,mygraph,start,goal,path=None):
+        '''use DFS to find path from start to goal with uniform cost
+            worst space = |V| and worst performance = |E|'''
+        #base case
+        if path == None:
+            path = [start]
         
+        if start == goal:
+            return path
+            
+        for neighbor in mygraph[start] - set(path):
+            mypath = self.dfs_paths_recursive(mygraph,neighbor,goal,path + [neighbor])
+            if mypath != None:
+                print mypath
+    
+    def bfs_traverse_iterative(self,mygraph,start):
+        visited, queue = set(),[start]
+        
+        while queue:
+            node = queue.pop(0)
+            if node not in visited:
+                visited.add(node)
+                queue.extend(mygraph[node] - visited)
+                
+        return visited
+        
+    def bfs_path_iterative(self,mygraph,start,goal):
+        queue = [(start, [start])]
+        while queue:
+            (vertex, path) = queue.pop(0)
+            for next in mygraph[vertex] - set(path):
+                if next == goal:
+                    yield path + [next]
+                else:
+                    queue.append([next, path+[next]])
+                    
+    def bfs_shortest_path(self,mygraph,start,goal):
+        '''find shortest path from start to goal with uniform cost
+            worst space = |V| and worst performance = |E|'''
+        try:
+            return next(self.bfs_path_iterative(mygraph, start, goal))
+        except StopIteration:
+            return None
         
 if __name__ == '__main__':
     fsd = find_shortest_distance()
@@ -88,6 +129,11 @@ if __name__ == '__main__':
     print fsd.DFS_iterative(graph, 'a')
     print fsd.DFS_recursive(graph, 'a')
     print list(fsd.dfs_paths_iterative(graph, 'a', 'f'))
+    fsd.dfs_paths_recursive(graph, 'a', 'f')
+    #----------------------------------------------------#
+    print fsd.bfs_traverse_iterative(graph, 'a')
+    print list(fsd.bfs_path_iterative(graph, 'a', 'f'))
+    print fsd.bfs_shortest_path(graph, 'a', 'f')
         
         
         
