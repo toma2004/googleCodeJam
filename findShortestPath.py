@@ -35,13 +35,23 @@ class find_shortest_distance:
     def make_graph_non_uniform_positive_negative_cost(self):
         mylist = [random.randint(-20,20) for x in range(12)]
         
+        #=======================================================================
+        # mygraph = {
+        #             'a' : {'b' : mylist[0], 'd' : mylist[1], 'e' :mylist[2]},
+        #             'b' : {'a' : mylist[3], 'c' : mylist[4]},
+        #             'c' : {'b' : mylist[5], 'd' : mylist[6]},
+        #             'd' : {'a' : mylist[7], 'c' : mylist[8], 'e' : mylist[9]},
+        #             'e' : { 'a' : mylist[10], 'd' : mylist[11]}      
+        #           }
+        #=======================================================================
+        
         mygraph = {
-                    'a' : {'b' : mylist[0], 'd' : mylist[1], 'e' :mylist[2]},
-                    'b' : {'a' : mylist[3], 'c' : mylist[4]},
-                    'c' : {'b' : mylist[5], 'd' : mylist[6]},
-                    'd' : {'a' : mylist[7], 'c' : mylist[8], 'e' : mylist[9]},
-                    'e' : { 'a' : mylist[10], 'd' : mylist[11]}      
-                  }
+        'a': {'b': -1, 'c':  4},
+        'b': {'c':  3, 'd':  2, 'e':  2},
+        'c': {},
+        'd': {'b':  1, 'c':  5},
+        'e': {'d': -3}
+        }
         return mygraph
     
     def DFS_iterative(self,mygraph,start):
@@ -122,7 +132,39 @@ class find_shortest_distance:
             return next(self.bfs_path_iterative(mygraph, start, goal))
         except StopIteration:
             return None
+    
+    def prep_Bellman_Ford(self,graph,source):
+        '''Step 1: initialize all node distance to infinity as we assume that
+                node is very far from its neighbors'''
+        d = {}
+        p = {}
+        for node in graph:
+            d[node] = float('Inf')
+            p[node] = None
+            
+        d[source] = 0
+        return d,p
+    
+    def relax(self,node,neighbor,graph,d,p):
+        '''update distance and predecessor list'''
+        if d[neighbor] > d[node] + graph[node][neighbor]:
+            d[neighbor] = d[node] + graph[node][neighbor]
+            p[neighbor] = node
+            
+    def Bellman_Ford(self,graph,source):
+        d,p = self.prep_Bellman_Ford(graph, source)
+        for i in range(len(graph) - 1):
+            for node in graph:
+                for neighbor in graph[node]:
+                    self.relax(node, neighbor, graph, d, p)
+            
+        #step 2: check if graph has a negative-weight cycle
+        for node in graph:
+            for neighbor in graph[node]:
+                assert d[neighbor] <= d[node] + graph[node][neighbor]
         
+        return d,p
+    
 if __name__ == '__main__':
     fsd = find_shortest_distance()
     graph = fsd.make_graph_uniform_cost()
@@ -134,6 +176,10 @@ if __name__ == '__main__':
     print fsd.bfs_traverse_iterative(graph, 'a')
     print list(fsd.bfs_path_iterative(graph, 'a', 'f'))
     print fsd.bfs_shortest_path(graph, 'a', 'f')
+    
+    graph_negative_edge = fsd.make_graph_non_uniform_positive_negative_cost()
+    d,p = fsd.Bellman_Ford(graph_negative_edge, 'a')
+    print d
         
         
         
