@@ -4,6 +4,8 @@ Created on Apr 11, 2015
 @author: NGUYEN TRAN
 '''
 import random
+import mydatastructure as dt
+import time
 
 class find_shortest_distance:
         
@@ -87,7 +89,7 @@ class find_shortest_distance:
                 if next == goal:
                     yield path + [next]
                 else:
-                        stack.append((next, path + [next]))
+                    stack.append((next, path + [next]))
                         
     def dfs_paths_recursive(self,mygraph,start,goal,path=None):
         '''use DFS to find path from start to goal with uniform cost
@@ -133,6 +135,33 @@ class find_shortest_distance:
         except StopIteration:
             return None
     
+    def prep_Dijkstra(self,graph,source):
+        '''Step 1: initialize all node distance to infinity as we assume that
+                node is very far from its neighbors'''
+        d = {}
+        p = {}
+        for node in graph:
+            d[node] = float('Inf')
+            p[node] = None
+        d[source] = 0
+        return d,p
+    
+    def Dijikstra(self,graph,source):
+        d,p = self.prep_Dijkstra(graph, source)
+        mytuple = (d[source],source)
+        myPQ = [None]
+        pq = dt.PriorityQueue(myPQ)
+        pq.insert(mytuple)
+        
+        while len(myPQ)>1:
+            (cost,vertex) = pq.delMin()
+            for v in graph[vertex]:
+                if d[v] > d[vertex] + graph[vertex][v]:
+                    d[v] = d[vertex] + graph[vertex][v]
+                    pq.insert((d[v],v))
+        
+        return d
+                        
     def prep_Bellman_Ford(self,graph,source):
         '''Step 1: initialize all node distance to infinity as we assume that
                 node is very far from its neighbors'''
@@ -168,17 +197,29 @@ class find_shortest_distance:
 if __name__ == '__main__':
     fsd = find_shortest_distance()
     graph = fsd.make_graph_uniform_cost()
+    print "Find shortest path using DFS"
     print fsd.DFS_iterative(graph, 'a')
     print fsd.DFS_recursive(graph, 'a')
     print list(fsd.dfs_paths_iterative(graph, 'a', 'f'))
     fsd.dfs_paths_recursive(graph, 'a', 'f')
     #----------------------------------------------------#
+    print "Find shortest path using BFS"
     print fsd.bfs_traverse_iterative(graph, 'a')
     print list(fsd.bfs_path_iterative(graph, 'a', 'f'))
     print fsd.bfs_shortest_path(graph, 'a', 'f')
+    #----------------------------------------------------#
+    print "Find shortest path using Dijstra"
+    graph_positive_edge = fsd.make_graph_non_uniform_positive_cost()
+    start = time.clock()
+    d1 = fsd.Dijikstra(graph_positive_edge, 'a')
+    print "time taken to finish Dijstra = ",time.clock() - start
+    print d1
     
+    print "Find shortest path using Bellman-Ford"
     graph_negative_edge = fsd.make_graph_non_uniform_positive_negative_cost()
-    d,p = fsd.Bellman_Ford(graph_negative_edge, 'a')
+    start = time.clock()
+    d,p = fsd.Bellman_Ford(graph_positive_edge, 'a')
+    print "time taken to finish Bellman-Ford = ",time.clock() - start
     print d
         
         
