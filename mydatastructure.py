@@ -4,6 +4,7 @@ Created on Apr 24, 2015
 @author: NguyenTran
 '''
 from __future__ import division
+from macpath import curdir
 
 class Queue:
     def __init__(self):
@@ -126,27 +127,99 @@ class PriorityQueue:
         
     def printHeap(self):
         print self.myPQueue
-            
-if __name__ == "__main__":
-    myheap = BinaryHeap()
-    myheap.insert(5)
-    myheap.insert(2)
-    myheap.insert(7)
-    myheap.insert(1)
-    myheap.printHeap()
+
+###########################################
+#Node class for use in LinkedList and Tree#
+###########################################
+class Node:
+    def __init__(self,value):
+        self.value = value
+        self.nextNode = None
+        
+class LinkedList:
+    def __init__(self,head=None):
+        self.head = head
     
-    print "After delete Min operation"
-    print "My min in heap =", myheap.delMin()
-    myheap.printHeap()
-    #################
-    print "Testing Priority Queue"
-    pq = [None]
-    myPQ = PriorityQueue(pq)
-    myPQ.insert((5,'v'))
-    myPQ.insert((2,'b'))
-    myPQ.insert((7,'n'))
-    myPQ.insert((1,'m'))
-    myPQ.printHeap()
-    print "Delete min"
-    print "My min =",myPQ.delMin()
-    myPQ.printHeap()
+    def insert_node(self,node):
+        #insert node at the beginning of the list
+        if not self.head:
+            self.head = node
+        else:
+            node.nextNode = self.head
+            self.head = node
+            
+    def search_linkedlist(self, value):
+        if self.head.value == value:
+            return self.head
+        else:
+            cur = self.head.nextNode
+            while cur:
+                if cur.value == value:
+                    return cur
+                cur = cur.nextNode
+            return None
+    
+    def delete_node(self,node):
+        if self.head == node:
+            self.head = self.head.nextNode
+            return 1
+        else:
+            prev = self.head
+            cur = self.head.nextNode
+            while cur:
+                if cur == node:
+                    prev.nextNode = cur.nextNode
+                    return 1
+                cur = cur.nextNode
+                prev = prev.nextNode
+        return 0
+            
+    def print_linkedList(self):
+        if not self.head:
+            return None
+        cur = self.head
+        while cur:
+            if cur.nextNode:
+                print '{%s}->' % cur.value,
+            else:
+                print '{%s}' % cur.value
+            cur = cur.nextNode
+                
+if __name__ == "__main__":
+    test_linkedlist = 1
+    if test_linkedlist:
+        n1 = Node(1)
+        n2 = Node(2)
+        n3 = Node(3)
+        my_linkedlist = LinkedList()
+        my_linkedlist.insert_node(n1)
+        my_linkedlist.insert_node(n2)
+        my_linkedlist.insert_node(n3)
+
+        my_linkedlist.print_linkedList()
+        my_linkedlist.delete_node(n2)
+        my_linkedlist.print_linkedList()
+        
+    else:
+        myheap = BinaryHeap()
+        myheap.insert(5)
+        myheap.insert(2)
+        myheap.insert(7)
+        myheap.insert(1)
+        myheap.printHeap()
+        
+        print "After delete Min operation"
+        print "My min in heap =", myheap.delMin()
+        myheap.printHeap()
+        #################
+        print "Testing Priority Queue"
+        pq = [None]
+        myPQ = PriorityQueue(pq)
+        myPQ.insert((5,'v'))
+        myPQ.insert((2,'b'))
+        myPQ.insert((7,'n'))
+        myPQ.insert((1,'m'))
+        myPQ.printHeap()
+        print "Delete min"
+        print "My min =",myPQ.delMin()
+        myPQ.printHeap()
