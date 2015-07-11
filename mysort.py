@@ -50,6 +50,43 @@ class mysort:
             index_mylist += 1
             index_b += 1
     
+    def correct_mergesort(self,arr,first,last):
+        if (first >= last):
+            return
+    
+        mid = (first+last)/2
+        self.correct_mergesort(arr, first, mid)
+        self.correct_mergesort(arr, mid+1, last)
+        self.merge(arr,first,mid,last)
+    
+    def merge(self,arr,first,mid,last):
+        left = first
+        right = mid + 1
+        temp = [0 for i in range(last+1)]
+        index = first
+    
+        while (left <= mid) and (right <= last):
+            if (arr[left] <= arr[right]):
+                temp[index] = arr[left]
+                left += 1
+            else:
+                temp[index] = arr[right]
+                right += 1
+            index += 1
+            
+        while left <= mid:
+            temp[index] = arr[left]
+            index += 1
+            left += 1
+        
+        while right <= last:
+            temp[index] = arr[right]
+            index += 1
+            right += 1
+            
+        for i in range(first,last+1):
+            arr[i] = temp[i]
+    
     def quickSort(self,alist,first,last):
         '''Quick sort a list. Average Big O (n log n) with worst case is O (n2)'''
         if first < last:
